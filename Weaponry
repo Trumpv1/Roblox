@@ -3,42 +3,6 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
--- Define the parameters for the circle
-local circleRadius = 150 -- Adjust this value as needed
-
--- Create the circle GUI element
-local circle = Instance.new("Frame")
-circle.Name = "Circle"
-circle.AnchorPoint = Vector2.new(0.5, 0.5)
-circle.BackgroundTransparency = 0
-circle.BackgroundColor3 = Color3.new(1, 1, 1) -- Adjust color as needed
-circle.BorderSizePixel = 0
-circle.Position = UDim2.new(0.5, 0, 0.5, 0)
-circle.Size = UDim2.new(0, circleRadius * 2, 0, circleRadius * 2)
-circle.ClipsDescendants = true
-circle.Parent = game:GetService("CoreGui")
-
--- Create the circular background
-local circleBackground = Instance.new("Frame")
-circleBackground.Name = "CircleBackground"
-circleBackground.AnchorPoint = Vector2.new(0.5, 0.5)
-circleBackground.BackgroundTransparency = 0
-circleBackground.BackgroundColor3 = Color3.new(1, 1, 1) -- Adjust color as needed
-circleBackground.BorderSizePixel = 0
-circleBackground.Position = UDim2.new(0.5, 0, 0.5, 0)
-circleBackground.Size = UDim2.new(1, 0, 1, 0)
-circleBackground.ZIndex = -10
-circleBackground.Parent = circle
-
--- Function to check if a point is inside the circle
-local function isInsideCircle(point)
-    local screenCenter = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-    local distance = (point - screenCenter).Magnitude
-    
-    return distance <= circleRadius
-end
-
--- Function to find the nearest player
 local function findNearestPlayer()
     local nearestPlayer, nearestDistance = nil, math.huge
     
@@ -47,14 +11,11 @@ local function findNearestPlayer()
             local character = player.Character
             local humanoidRootPart = character.HumanoidRootPart
             local screenPos, onScreen = Camera:WorldToScreenPoint(humanoidRootPart.Position)
+            local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
             
-            if isInsideCircle(Vector2.new(screenPos.X, screenPos.Y)) then
-                local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
-                
-                if distance < nearestDistance then
-                    nearestDistance = distance
-                    nearestPlayer = player
-                end
+            if distance < nearestDistance then
+                nearestDistance = distance
+                nearestPlayer = player
             end
         end
     end
